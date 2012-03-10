@@ -20,7 +20,6 @@ Simplest usage
 
 ## TODO
 
-  - add build script (jshint, uglify)
   - add description how to get app Id's
   - add description how to view google analytics report
   - add description of all options
