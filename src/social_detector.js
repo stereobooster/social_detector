@@ -1,29 +1,28 @@
 /**
  * https://github.com/stereobooster/social_detector
- * v0.0.1
+ * v0.0.2
  */
-(function (window) {
-	var undefined,
-	document = window.document,
+(function (window, undefined) {
+	var document = window.document,
 	load_script = function(src){
 		var t = 'script',
 		g=document.createElement(t),
 		s=document.getElementsByTagName(t)[0];
-	    g.src=src;
-	    s.parentNode.insertBefore(g,s)
+		g.src=src;
+		s.parentNode.insertBefore(g,s);
 	},
 	i,
 	login_status = function(network, status) {
-		i++;
-		window._gaq.push(['_setCustomVar', i, network + '_State', status ? 'LoggedIn' : 'NotLoggedIn', 1]);
-		if (i == 5) {
+		i+=1;
+		window._gaq.push(['_setCustomVar', i, network + '_State', (status ? '' : 'Not') + 'LoggedIn', 1]);
+		if (i === 5) {
 			window._gaq.push(['_trackEvent', 'Social', 'Detection', undefined,  undefined, true]);
 		}
 	},
 	img = function(src, name){
-		var i = new Image;
-		i.onload=function(){login_status(name, true); i = i.onload = i.onerror = undefined };
-		i.onerror=function(){login_status(name, false); i = i.onload = i.onerror = undefined };
+		var i = new Image();
+		i.onload=function(){login_status(name, true); i = i.onload = i.onerror = undefined; };
+		i.onerror=function(){login_status(name, false); i = i.onload = i.onerror = undefined; };
 		i.src=src;
 	},
 	detectors = {
@@ -33,7 +32,7 @@
 				window.fbAsyncInit = function(){
 					FB.init({ appId:this.appId, status:true, cookie:true, xfbml:true});
 					FB.getLoginStatus(function(response){
-						login_status(name, response.status!='unknown');
+						login_status(name, response.status!=='unknown');
 					});
 				};
 			}
@@ -59,21 +58,20 @@
 			img_url: 'https://twitter.com/login?redirect_after_login=%2Fimages%2Fspinner.gif'
 		}
 	},
-	name,
 	detector,
 	init = function () {
 		i = 0;
-		for (name in detectors) {
-			detector = detectors[name];
+		for (var detector_name in detectors) {
+			detector = detectors[detector_name];
 			if (detector.img_url) {
-				img(detector.img_url, name);
+				img(detector.img_url, detector_name);
 			}
 			if (detector.appId) {
 				if (detector.src) {
 					load_script(detector.src);
 				}
 				if (detector.init) {
-					detector.init(name);
+					detector.init(detector_name);
 				}
 			}
 		}
@@ -82,7 +80,7 @@
 		window._gaq = window._gaq || [];
 		if (options.ga) {
 			window._gaq = [['_setAccount',options.ga],['_trackPageview']];
-			load_script(('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js');
+			load_script(('https:'===location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js');
 		}
 		if (options.facebook) {
 			detectors.facebook.appId = options.facebook;
@@ -94,6 +92,6 @@
 			login_status = options.callback;
 		}
 		init();
-	}
+	};
 	window.social_detector = social_detector;
-})(window)
+}(window));

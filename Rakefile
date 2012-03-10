@@ -1,4 +1,4 @@
-LIB_VERSION  = "0.0.1"
+LIB_VERSION  = "0.0.2"
 LIB_NAME = "social_detector"
 
 LIB_ROOT     = File.expand_path(File.dirname(__FILE__))
@@ -193,7 +193,7 @@ Jshintrb::JshintTask.new :jshint do |t|
       :plusplus => true,
       :regexp => true,
       :undef => true,
-      :strict => true,
+      :strict => false,
       :trailing => true,
       :browser => true,
       :undef => true,
