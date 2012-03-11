@@ -1,6 +1,6 @@
 /**
  * https://github.com/stereobooster/social_detector
- * v0.0.2
+ * v0.0.3
  */
 (function (window, undefined) {
 	var document = window.document,
@@ -12,10 +12,11 @@
 		s.parentNode.insertBefore(g,s);
 	},
 	i,
+	detectors_total = 0,
 	login_status = function(network, status) {
 		i+=1;
 		window._gaq.push(['_setCustomVar', i, network + '_State', (status ? '' : 'Not') + 'LoggedIn', 1]);
-		if (i === 5) {
+		if (i >= detectors_total) {
 			window._gaq.push(['_trackEvent', 'Social', 'Detection', undefined,  undefined, true]);
 		}
 	},
@@ -63,23 +64,21 @@
 		i = 0;
 		for (var detector_name in detectors) {
 			detector = detectors[detector_name];
-			if (detector.img_url) {
-				img(detector.img_url, detector_name);
-			}
 			if (detector.appId) {
-				if (detector.src) {
-					load_script(detector.src);
-				}
-				if (detector.init) {
-					detector.init(detector_name);
-				}
+				detectors_total+=1;
+				load_script(detector.src);
+				detector.init(detector_name);
+			} else if (detector.img_url) {
+				detectors_total+=1;
+				img(detector.img_url, detector_name);
 			}
 		}
 	},
 	social_detector = function (options) {
 		window._gaq = window._gaq || [];
 		if (options.ga) {
-			window._gaq = [['_setAccount',options.ga],['_trackPageview']];
+			window._gaq.push(['_setAccount', options.ga]);
+			window._gaq.push(['_trackPageview']);
 			load_script(('https:'===location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js');
 		}
 		if (options.facebook) {

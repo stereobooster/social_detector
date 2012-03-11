@@ -1,4 +1,4 @@
-LIB_VERSION  = "0.0.2"
+LIB_VERSION  = "0.0.3"
 LIB_NAME = "social_detector"
 
 LIB_ROOT     = File.expand_path(File.dirname(__FILE__))
