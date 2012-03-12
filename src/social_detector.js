@@ -1,6 +1,6 @@
 /**
  * https://github.com/stereobooster/social_detector
- * v0.0.3
+ * v0.1.0
  */
 (function (window, undefined) {
 	var document = window.document,
@@ -11,12 +11,12 @@
 		g.src=src;
 		s.parentNode.insertBefore(g,s);
 	},
-	i,
+	detectors_loaded,
 	detectors_total = 0,
 	login_status = function(network, status) {
-		i+=1;
-		window._gaq.push(['_setCustomVar', i, network + '_State', (status ? '' : 'Not') + 'LoggedIn', 1]);
-		if (i >= detectors_total) {
+		detectors_loaded+=1;
+		window._gaq.push(['_setCustomVar', detectors_loaded, network + '_State', (status ? '' : 'Not') + 'LoggedIn', 1]);
+		if (detectors_loaded >= detectors_total) {
 			window._gaq.push(['_trackEvent', 'Social', 'Detection', undefined,  undefined, true]);
 		}
 	},
@@ -27,6 +27,15 @@
 		i.src=src;
 	},
 	detectors = {
+		google: {
+			img_url: 'https://accounts.google.com/CheckCookie?continue=https://www.google.com/intl/en/images/logos/accounts_logo.png'
+		},
+		google_plus: {
+			img_url: 'https://plus.google.com/up/?continue=https://www.google.com/intl/en/images/logos/accounts_logo.png&type=st&gpsrc=ogpy0'
+		},
+		twitter: {
+			img_url: 'https://twitter.com/login?redirect_after_login=%2Fimages%2Fspinner.gif'
+		},
 		facebook: {
 			src: '//connect.facebook.net/en_US/all.js',
 			init: function(name){
@@ -48,29 +57,21 @@
 					});
 				};
 			}
-		},
-		google: {
-			img_url: 'https://accounts.google.com/CheckCookie?continue=https://www.google.com/intl/en/images/logos/accounts_logo.png'
-		},
-		google_plus: {
-			img_url: 'https://plus.google.com/up/?continue=https://www.google.com/intl/en/images/logos/accounts_logo.png&type=st&gpsrc=ogpy0'
-		},
-		twitter: {
-			img_url: 'https://twitter.com/login?redirect_after_login=%2Fimages%2Fspinner.gif'
 		}
 	},
 	detector,
 	init = function () {
-		i = 0;
+		detectors_loaded = 0;
 		for (var detector_name in detectors) {
 			detector = detectors[detector_name];
+			detectors_total+=1;
 			if (detector.appId) {
-				detectors_total+=1;
 				load_script(detector.src);
 				detector.init(detector_name);
 			} else if (detector.img_url) {
-				detectors_total+=1;
 				img(detector.img_url, detector_name);
+			} else {
+				detectors_loaded+=1;
 			}
 		}
 	},
